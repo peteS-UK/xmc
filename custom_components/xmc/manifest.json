@@ -1,0 +1,12 @@
+{
+    "domain": "xmc",
+    "name": "Emotiva XMC-1",
+    "codeowners": ["peteS-UK"],
+    "dependencies": [],
+    "documentation": "https://github.com/peteS-UK/xmc/blob/main/README.md",
+    "iot_class": "local_polling",
+    "requirements": ["lxml"],
+    "version": "0.1.0",
+    "issue_tracker": "https://github.com/peteS-UK/xmc/issues"
+  }
+  

@@ -1,0 +1,31 @@
+send_command:
+  name: XMC Service
+  description: Send commands to Emotiva XMC-1
+  fields:
+    xmcCommand:
+      name: XMC Command
+      Description: Select the command to execute
+      required: true
+      selector:
+        select:
+          mode: dropdown 
+          options:
+            - label: Volume Up
+              value: "volup"
+            - label: Volume Down
+              value: "voldown"
+            - label: Mute
+              value: "mute"
+            - label: Power On
+              value: "poweron"
+            - label: Power Off
+              value: "poweroff"
+            - label: Input
+              value: "input"
+
+    xmcValue:
+      name: XMC Command Value
+      Description: The value associated with the command
+      required: false
+      selector:
+        text:
