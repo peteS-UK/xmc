@@ -22,7 +22,6 @@ send_command:
               value: "poweroff"
             - label: Input
               value: "input"
-
     xmcValue:
       name: XMC Command Value
       Description: The value associated with the command
