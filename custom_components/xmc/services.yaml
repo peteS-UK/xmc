@@ -4,7 +4,7 @@ send_command:
   fields:
     xmcCommand:
       name: XMC Command
-      Description: Select the command to execute
+      description: "Select the command to execute"
       required: true
       selector:
         select:
@@ -24,7 +24,7 @@ send_command:
               value: "input"
     xmcValue:
       name: XMC Command Value
-      Description: The value associated with the command
+      description: "The value associated with the command"
       required: false
       selector:
         text:
