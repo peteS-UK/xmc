@@ -96,16 +96,26 @@ class Emotiva(object):
     self._send_request(msg, ack=True)
 
 
-  def _send_request(self, req, ack=False):
+  def _update_status(self, events, _proto_ver = 2.0):
+    _LOGGER.debug("proto_ver %d", _proto_ver)
+    msg = self.format_request('emotivaUpdate',
+                              [(ev, {}) for ev in events],
+                              #{'protocol':"3.0"} if _proto_ver == 3 else {})
+                              {})
+    self._send_request(msg, ack=True)
+
+  def _send_request(self, req, ack=False, process_response=True):
     self._ctrl_sock.sendto(req, (self._ip, self._ctrl_port))
 
     while ack:
       try:
         _resp_data, (ip, port) = self._ctrl_sock.recvfrom(4096)
-        _LOGGER.debug("Response: %s",_resp_data)
-        resp = self._parse_response(_resp_data)
-        self._handle_status(resp)
+        _LOGGER.debug("Response on ack: %s",_resp_data)
+        if process_response == True:
+          resp = self._parse_response(_resp_data)
+          self._handle_status(resp)
       except socket.timeout:
+        _LOGGER.debug("socket.timeout on ack")
         break
 
   def __parse_transponder(self, transp_xml):
@@ -239,8 +249,10 @@ class Emotiva(object):
   @power.setter
   def power(self, onoff):
     cmd = {True: 'power_on', False: 'power_off'}[onoff]
-    msg = self.format_request('emotivaControl', [(cmd, {'value': '0'})])
-    self._send_request(msg)
+    msg = self.format_request('emotivaControl', [(cmd, {'value': '0',
+                                                              'ack':'True'})])
+    self._send_request(msg, ack=True, process_response=False)
+
 
   @property
   def volume(self):
@@ -250,18 +262,20 @@ class Emotiva(object):
 
   @volume.setter
   def volume(self, value):
-    msg = self.format_request('emotivaControl', [('set_volume', {'value': str(value)})])
-    self._send_request(msg)
+    msg = self.format_request('emotivaControl', [('set_volume', {'value': str(value),
+                                                              'ack':'True'})])
+    self._send_request(msg, ack=True, process_response=False)
 
   def _volume_step(self, incr):
     # The XMC-1 with firmware version <= 3.1a will not change the volume unless
     # the volume overlay is up. So, we first send a noop command for volume step
     # with value 0, and then send the real step.
     noop = self.format_request('emotivaControl', [('volume', {'value': '0'})])
-    msg = self.format_request('emotivaControl', [('volume', {'value': str(incr)})])
+    msg = self.format_request('emotivaControl', [('volume', {'value': str(incr),
+                                                              'ack':'True'})])
     self._send_request(noop)
-    self._send_request(msg)
-
+    self._send_request(msg, ack=True, process_response=False)
+    
   def volume_up(self):
     self._volume_step(1)
 
@@ -269,12 +283,14 @@ class Emotiva(object):
     self._volume_step(-1)
 
   def mute_toggle(self):
-    msg = self.format_request('emotivaControl', [('mute', {'value': '0'})])
-    self._send_request(msg)
+    msg = self.format_request('emotivaControl', [('mute', {'value': '0',
+                                                              'ack':'True'})])
+    self._send_request(msg, ack=True, process_response=False)
 
   def set_input(self, source):
-    msg = self.format_request('emotivaControl', [(source, {'value': '0'})])
-    self._send_request(msg)
+    msg = self.format_request('emotivaControl', [(source, {'value': '0',
+                                                              'ack':'True'})])
+    self._send_request(msg, ack=True, process_response=False)
 
   @property
   def mute(self):
@@ -387,14 +403,23 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
             if (int(_input) < 1 or int(_input) > 8 or _input is None):
               _input = "1"
             xmc.set_input("source_"+_input)
+
+        xmc._update_status(xmc._events, xmc._proto_ver)
+
+        _update_all_hass_states(xmc)
             
     def update_state(call: ServiceCall) -> None:
         xmc = create_xmc()
 
         xmc.connect()
 
-        xmc._subscribe_events(xmc._events, xmc._proto_ver)
+        # xmc._subscribe_events(xmc._events, xmc._proto_ver)
+        xmc._update_status(xmc._events, xmc._proto_ver)
 
+        _update_all_hass_states(xmc)
+
+    def _update_all_hass_states(xmc):
+        
         hass.states.set("emotiva_xmc.power", xmc._current_state['power'])
         hass.states.set("emotiva_xmc.source", xmc._current_state['source'])
         hass.states.set("emotiva_xmc.mode", xmc._current_state['mode'])
@@ -404,9 +429,7 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         hass.states.set("emotiva_xmc.video_input", xmc._current_state['video_input'])
         hass.states.set("emotiva_xmc.video_format", xmc._current_state['video_format'])
 
-
     def discover(call: ServiceCall) -> None:
-
 
         _ip, _xml = _discover()
     
@@ -415,6 +438,13 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _ip, _xml = Emotiva.discover(version=3)[0]
 
         xmc = Emotiva(_ip,_xml)
+
+        xmc.connect()
+
+        # xmc._subscribe_events(xmc._events, xmc._proto_ver)
+        xmc._update_status(xmc._events, xmc._proto_ver)
+
+        _update_all_hass_states(xmc)
 
         hass.states.set("emotiva_xmc.control_port", xmc._ctrl_port)
         hass.states.set("emotiva_xmc.protocol_version", xmc._proto_ver)

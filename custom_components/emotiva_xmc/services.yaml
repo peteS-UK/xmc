@@ -1,5 +1,5 @@
 send_command:
-  name: XMC Service
+  name: Send Command
   description: Send commands to Emotiva XMC-1
   fields:
     xmcCommand:
@@ -28,3 +28,12 @@ send_command:
       required: false
       selector:
         text:
+
+discover:
+  name: Discover XMC Processor
+  description: Discover XMC Processors on the network and update states
+
+update_state:
+  name: Update States
+  description: Update states for volume, power, mute, input etc. for XMC processor
+
