@@ -83,6 +83,9 @@ class Emotiva(object):
     self._ctrl_sock.bind(('', self._ctrl_port))
     self._ctrl_sock.settimeout(0.5)
 
+  def disconnect(self):
+    self._ctrl_sock.close()
+
 #  def _notify_handler(self, data):
 #    resp = self._parse_response(data)
 #    self._handle_status(resp)
@@ -407,6 +410,10 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         xmc._update_status(xmc._events, xmc._proto_ver)
 
         _update_all_hass_states(xmc)
+
+        xmc.disconnect()
+
+        del xmc
             
     def update_state(call: ServiceCall) -> None:
         xmc = create_xmc()
@@ -417,6 +424,10 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         xmc._update_status(xmc._events, xmc._proto_ver)
 
         _update_all_hass_states(xmc)
+
+        xmc.disconnect()
+
+        del xmc  
 
     def _update_all_hass_states(xmc):
         
@@ -454,6 +465,10 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         hass.states.set("emotiva_xmc.info_port", xmc._info_port)
         hass.states.set("emotiva_xmc.notify_port", xmc._notify_port)
         hass.states.set("emotiva_xmc.setup_port", xmc._setup_port_tcp) 
+
+        xmc.disconnect()
+
+        del xmc
 
         return _ip, _xml 
 
