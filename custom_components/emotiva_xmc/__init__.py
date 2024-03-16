@@ -15,7 +15,7 @@ class Error(Exception):
   pass
 
 # The domain of your component. Should be equal to the name of your component.
-DOMAIN = "xmc"
+DOMAIN = "emotiva_xmc"
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -334,20 +334,20 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     def create_xmc():
         
-        if hass.states.get("xmc.control_port") is not None :
+        if hass.states.get("emotiva_xmc.control_port") is not None :
           # We already have ports
-          if int(hass.states.get("xmc.control_port").state) != 0 :
+          if int(hass.states.get("emotiva_xmc.control_port").state) != 0 :
             # Call with the ports
             _LOGGER.debug("Create with ports")
-            xmc = Emotiva(ip = hass.states.get("xmc.address").state,
+            xmc = Emotiva(ip = hass.states.get("emotiva_xmc.address").state,
                           transp_xml = None, 
-                          _ctrl_port = int(hass.states.get("xmc.control_port").state), 
-                          _notify_port = int(hass.states.get("xmc.notify_port").state),
-                          _name = hass.states.get("xmc.name").state,
-                          _model = hass.states.get("xmc.model").state,
-                          _proto_ver = float(hass.states.get("xmc.protocol_version").state),
-                          _info_port = int(hass.states.get("xmc.info_port").state),
-                          _setup_port = int(hass.states.get("xmc.setup_port").state),
+                          _ctrl_port = int(hass.states.get("emotiva_xmc.control_port").state), 
+                          _notify_port = int(hass.states.get("emotiva_xmc.notify_port").state),
+                          _name = hass.states.get("emotiva_xmc.name").state,
+                          _model = hass.states.get("emotiva_xmc.model").state,
+                          _proto_ver = float(hass.states.get("emotiva_xmc.protocol_version").state),
+                          _info_port = int(hass.states.get("emotiva_xmc.info_port").state),
+                          _setup_port = int(hass.states.get("emotiva_xmc.setup_port").state),
                           )
           else :
             _LOGGER.debug("Create with xml1")
@@ -395,14 +395,14 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         xmc._subscribe_events(xmc._events, xmc._proto_ver)
 
-        hass.states.set("xmc.power", xmc._current_state['power'])
-        hass.states.set("xmc.source", xmc._current_state['source'])
-        hass.states.set("xmc.mode", xmc._current_state['mode'])
-        hass.states.set("xmc.volume", xmc._current_state['volume'])
-        hass.states.set("xmc.audio_input", xmc._current_state['audio_input'])
-        hass.states.set("xmc.audio_bitstream", xmc._current_state['audio_bitstream'])
-        hass.states.set("xmc.video_input", xmc._current_state['video_input'])
-        hass.states.set("xmc.video_format", xmc._current_state['video_format'])
+        hass.states.set("emotiva_xmc.power", xmc._current_state['power'])
+        hass.states.set("emotiva_xmc.source", xmc._current_state['source'])
+        hass.states.set("emotiva_xmc.mode", xmc._current_state['mode'])
+        hass.states.set("emotiva_xmc.volume", xmc._current_state['volume'])
+        hass.states.set("emotiva_xmc.audio_input", xmc._current_state['audio_input'])
+        hass.states.set("emotiva_xmc.audio_bitstream", xmc._current_state['audio_bitstream'])
+        hass.states.set("emotiva_xmc.video_input", xmc._current_state['video_input'])
+        hass.states.set("emotiva_xmc.video_format", xmc._current_state['video_format'])
 
 
     def discover(call: ServiceCall) -> None:
@@ -416,14 +416,14 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         xmc = Emotiva(_ip,_xml)
 
-        hass.states.set("xmc.control_port", xmc._ctrl_port)
-        hass.states.set("xmc.protocol_version", xmc._proto_ver)
-        hass.states.set("xmc.name", xmc._name)
-        hass.states.set("xmc.model", xmc._model)
-        hass.states.set("xmc.address", xmc._ip)
-        hass.states.set("xmc.info_port", xmc._info_port)
-        hass.states.set("xmc.notify_port", xmc._notify_port)
-        hass.states.set("xmc.setup_port", xmc._setup_port_tcp) 
+        hass.states.set("emotiva_xmc.control_port", xmc._ctrl_port)
+        hass.states.set("emotiva_xmc.protocol_version", xmc._proto_ver)
+        hass.states.set("emotiva_xmc.name", xmc._name)
+        hass.states.set("emotiva_xmc.model", xmc._model)
+        hass.states.set("emotiva_xmc.address", xmc._ip)
+        hass.states.set("emotiva_xmc.info_port", xmc._info_port)
+        hass.states.set("emotiva_xmc.notify_port", xmc._notify_port)
+        hass.states.set("emotiva_xmc.setup_port", xmc._setup_port_tcp) 
 
         return _ip, _xml 
 

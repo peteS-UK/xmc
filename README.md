@@ -19,7 +19,7 @@ Once downloaded either via HACS or manually, restart your Home Assistant server.
 To enable the integration, add the following line to your configuration.yaml file, typically in your /config folder.
 
 ```yaml
-xmc:
+emotiva_xmc:
 ```
 
 Once updated, restart your Home Assistant server again to enable the integration.

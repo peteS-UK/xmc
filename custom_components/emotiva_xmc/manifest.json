@@ -1,5 +1,5 @@
 {
-    "domain": "xmc",
+    "domain": "emotiva_xmc",
     "name": "Emotiva XMC-1",
     "codeowners": ["@peteS-UK"],
     "dependencies": [],
