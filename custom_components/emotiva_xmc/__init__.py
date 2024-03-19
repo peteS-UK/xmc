@@ -94,8 +94,8 @@ class Emotiva(object):
     _LOGGER.debug("proto_ver %d", _proto_ver)
     msg = self.format_request('emotivaSubscription',
                               [(ev, {}) for ev in events],
-                              #{'protocol':"3.0"} if _proto_ver == 3 else {})
-                              {})
+                              {'protocol':"3.0"} if _proto_ver == 3 else {})
+                              #{})
     self._send_request(msg, ack=True)
 
 
@@ -103,8 +103,8 @@ class Emotiva(object):
     _LOGGER.debug("proto_ver %d", _proto_ver)
     msg = self.format_request('emotivaUpdate',
                               [(ev, {}) for ev in events],
-                              #{'protocol':"3.0"} if _proto_ver == 3 else {})
-                              {})
+                              {'protocol':"3.0"} if _proto_ver == 3 else {})
+                              #{})
     self._send_request(msg, ack=True)
 
   def _send_request(self, req, ack=False, process_response=True):
@@ -141,6 +141,10 @@ class Emotiva(object):
 
   def _handle_status(self, resp):
     for elem in resp:
+      if elem.tag == "property":
+        # v3 protocol style response, convert it to v2 style
+        _LOGGER.debug("Handling Protocol V3 xml")
+        elem.tag = elem.get('name')
       if elem.tag not in self._current_state:
         _LOGGER.debug('Unknown element: %s' % elem.tag)
         continue
