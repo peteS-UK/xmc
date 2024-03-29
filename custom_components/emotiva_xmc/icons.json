@@ -1,0 +1,8 @@
+{
+    "services": 
+    {
+      "update_state": "mdi:update",
+      "discover": "mdi:home-search",
+      "send_command" :"mdi:send"
+    }
+}
