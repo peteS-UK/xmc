@@ -42,7 +42,7 @@ This service allows you to send a command and it's associated value to the XMC. 
 
 ![image](https://github.com/peteS-UK/xmc/assets/64092177/e9bc9bb1-f0fe-4ad0-bd0d-1762ce147078)
 
-When you send a command, the States for the XMC will also be updated.
+When you send a command, the States for the XMC will also be updated.  You can use this in automations, scripts etc., or perhaps also from the HA API to allow you to use the XMC HA integration from other applications.
 
 ### Update States
 
