@@ -56,45 +56,33 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     def send_command(call: ServiceCall) -> None:
 
-        # Test to see if discover has already been run and the ports stored
-
         xmc, _method = create_xmc()
 
         xmc.connect()
 
-        match call.data.get("xmcCommand"):
-          case "volup":
-            xmc.volume_up()
-          case "voldown":
-            xmc.volume_down()
-          case "mute":
-            xmc.mute_toggle()
-          case "poweron":
-            xmc.power = True
-          case "poweroff":
-            xmc.power = False
-          case "input":
-            _input = call.data.get("xmcValue")
-            if (int(_input) < 1 or int(_input) > 8 or _input is None):
-              _input = "1"
-            xmc.set_input("source_"+_input)
-
-        xmc._update_status(xmc._events, float(xmc._proto_ver))
-
-        _update_all_hass_states(xmc)
-
+        try:
+          xmc.send_command(call.data.get("xmcCommand"),call.data.get("xmcValue"))
+          xmc._update_status(xmc._events, float(xmc._proto_ver))
+          _update_all_hass_states(xmc)
+        except:
+          pass
+        
         xmc.disconnect()
 
         del xmc
             
     def update_state(call: ServiceCall) -> None:
+
         xmc,_method = create_xmc()
 
         xmc.connect()
 
         # xmc._subscribe_events(xmc._events, xmc._proto_ver)
-        # update status is create wasn't via Fy, which will already have done update
+        # update status is create wasn't via discover, which will already have done update
         if _method != "discover":
+          if call.data.get("xmcNotify") is not None:
+             xmc._events = xmc._events.union(set(call.data.get("xmcNotify")))
+             xmc._current_state.update(dict((m, None) for m in call.data.get("xmcNotify")))
           xmc._update_status(xmc._events, xmc._proto_ver)
           _update_all_hass_states(xmc)
 
@@ -104,14 +92,8 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     def _update_all_hass_states(xmc):
         
-        hass.states.set("emotiva_xmc.power", xmc._current_state['power'])
-        hass.states.set("emotiva_xmc.source", xmc._current_state['source'])
-        hass.states.set("emotiva_xmc.mode", xmc._current_state['mode'])
-        hass.states.set("emotiva_xmc.volume", xmc._current_state['volume'])
-        hass.states.set("emotiva_xmc.audio_input", xmc._current_state['audio_input'])
-        hass.states.set("emotiva_xmc.audio_bitstream", xmc._current_state['audio_bitstream'])
-        hass.states.set("emotiva_xmc.video_input", xmc._current_state['video_input'])
-        hass.states.set("emotiva_xmc.video_format", xmc._current_state['video_format'])
+        for ev in xmc._events:
+          hass.states.set("emotiva_xmc.%s" % ev, xmc._current_state[ev])
 
     def discover(call: ServiceCall) -> None:
 
