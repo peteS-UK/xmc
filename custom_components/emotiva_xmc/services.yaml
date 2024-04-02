@@ -175,7 +175,6 @@ update_state:
       selector:
         select:
           multiple: true
-          required: false
           options:
             - audio_bits
             - back
