@@ -28,19 +28,20 @@ Once updated, restart your Home Assistant server again to enable the integration
 
 The integration add 3 services which can be included in automations, scripts etc., or called manually from Developer Tools/Services.
 
-![image](https://github.com/peteS-UK/xmc/assets/64092177/b44b130e-f570-4365-b79d-6988130d2d64)
+![image](https://github.com/peteS-UK/xmc/assets/64092177/757ed2f1-099b-4c07-839b-ad3472a54cb6)
+
 
 ### Discover Emotiva Processor 
 
 This service searches the local network for your processor.  The Home Assistant and processor must be on the same subnet.  Once found, the discovery process will update a number of attributes on the emotiva_xmc.processor entity for the processor.  Although you can run this manually, it's only really needed if you change something (e.g. the IP address of your processor).  Generally, the Send Command and Update States services will discover the processor when they're first run, and then use the saved states for future executions.
 
-![image](https://github.com/peteS-UK/xmc/assets/64092177/080d56e6-3691-4064-ac5d-9a4cdb022d71)
+![image](https://github.com/peteS-UK/xmc/assets/64092177/901b1d09-5241-4047-a3fc-241c82017b30)
 
 ### Send Command
 
 This service allows you to send a command and its associated value to the processor.  It supports all 140 or so commands the Emotiva API supports.  Many commands take 0 as their value parameter (e.g. power_on).
 
-![image](https://github.com/peteS-UK/xmc/assets/64092177/e9bc9bb1-f0fe-4ad0-bd0d-1762ce147078)
+![image](https://github.com/peteS-UK/xmc/assets/64092177/79ef0450-1608-4203-84c7-b259d4c1041c)
 
 When you send a command, the attributes for emotiva_xmc.processor entity for the processor will also be updated.  You can use this in automations, scripts etc., or perhaps also from the HA API to allow you to use the Emotiva HA integration from other applications.
 
@@ -48,13 +49,22 @@ When you send a command, the attributes for emotiva_xmc.processor entity for the
 
 When you discover, or send a command to the processor, it will update a number of entity attributes for the emotiva_xmc.processor entity.  Changes on the processor side aren't pushed to Home Assistant, so you should update the attributes before using them by calling this service.  You could of course setup a periodic automation to run, for example, once per minute, to keep these attributes fresh.
 
-You could then, for example create triggers based on change of state
+You could then, for example create triggers based on change of state or attribute
 
-![image](https://github.com/peteS-UK/xmc/assets/64092177/6987142d-1bec-4602-953e-26a37948cf3e)
+![image](https://github.com/peteS-UK/xmc/assets/64092177/1d3b0e5e-5f6b-4446-949b-9349bef45e39)
 
-When you call the Update States service, by default it will create attributes for volume, power, mute, zone2 power, source, mode, audio_input, audio_bitstream, video_input &  video_format.  You can optionally specify any of the additional notification options from the processor, which will then create additional attributes in Home Assistant, which you can then monitor and use.
 
-![image](https://github.com/peteS-UK/xmc/assets/64092177/05822950-efcc-435b-aa7f-22f0b17d10e1)
+When you call the Update States service, by default it will create attributes for volume, power, mute, zone2 power, source, mode, audio_input, audio_bitstream, video_input &  video_format.  
+
+![image](https://github.com/peteS-UK/xmc/assets/64092177/163a3423-92a7-4c24-bc1b-9cbb161bed0f)
+
+
+You can optionally specify any of the additional notification options from the processor, which will then create additional attributes in Home Assistant, which you can then monitor and use.
+
+![image](https://github.com/peteS-UK/xmc/assets/64092177/53c3789c-8974-4aec-b369-5b9cd21a9f43)
+
+
+
 
 
 
