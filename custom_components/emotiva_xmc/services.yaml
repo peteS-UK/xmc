@@ -2,9 +2,9 @@ send_command:
   name: Send Command
   description: Send commands to Emotiva processor
   fields:
-    xmcCommand:
-      name: XMC Command
-      description: "The XMC Command to send.  You must also specify the XMC Command Value"
+    Command:
+      name: Command
+      description: "The Command to send to the processor.  You must also specify the Command Value"
       required: true 
       selector:
         select:
@@ -153,8 +153,8 @@ send_command:
             - zone2_power_on
             - zone2_set_volume
             - zone2_volume
-    xmcValue:
-      name: XMC Command Value
+    Value:
+      name: Command Value
       description: "The value associated with the command.  For many commands, this is often 0"
       required: true
       selector:
@@ -166,11 +166,11 @@ discover:
 
 update_state:
   name: Update States
-  description: Update entity attributes for volume, power, mute, zone2 power, source, mode, audio_input, audio_bitstream, video_input, video_format for XMC processor
+  description: Update entity attributes for volume, power, mute, zone2 power, source, mode, audio_input, audio_bitstream, video_input, video_format for Emotiva processor
   fields:
-    xmcNotify:
-      name: XMC Notifications
-      description: "A list of additional XMC Notifications for which to create entity attributes."
+    Notify:
+      name: Processor Notifications
+      description: "A list of additional processor Notifications for which to create entity attributes."
       required: false
       selector:
         select:

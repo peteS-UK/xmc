@@ -63,7 +63,7 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         xmc.connect()
 
         try:
-          xmc.send_command(call.data.get("xmcCommand"),call.data.get("xmcValue"))
+          xmc.send_command(call.data.get("Command"),call.data.get("Value"))
           xmc._update_status(xmc._events, float(xmc._proto_ver))
           _update_all_hass_states(xmc)
         except:
@@ -82,9 +82,9 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
         # xmc._subscribe_events(xmc._events, xmc._proto_ver)
         # update status is create wasn't via discover, which will already have done update
         if _method != "discover":
-          if call.data.get("xmcNotify") is not None:
-             xmc._events = xmc._events.union(set(call.data.get("xmcNotify")))
-             xmc._current_state.update(dict((m, None) for m in call.data.get("xmcNotify")))
+          if call.data.get("Notify") is not None:
+             xmc._events = xmc._events.union(set(call.data.get("Notify")))
+             xmc._current_state.update(dict((m, None) for m in call.data.get("Notify")))
           xmc._update_status(xmc._events, xmc._proto_ver)
           _update_all_hass_states(xmc)
 
