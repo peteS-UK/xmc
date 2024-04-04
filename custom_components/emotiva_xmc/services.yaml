@@ -1,6 +1,6 @@
 send_command:
   name: Send Command
-  description: Send commands to Emotiva XMC-1
+  description: Send commands to Emotiva processor
   fields:
     xmcCommand:
       name: XMC Command
@@ -161,16 +161,16 @@ send_command:
         text:
 
 discover:
-  name: Discover XMC Processor
-  description: Discover XMC Processors on the network and update states
+  name: Discover Emotiva Processor
+  description: Discover Emotiva Processors on the network and update states
 
 update_state:
   name: Update States
-  description: Update states for volume, power, mute, zone2 power, source, mode, audio_input, audio_bitstream, video_input, video_format for XMC processor
+  description: Update entity attributes for volume, power, mute, zone2 power, source, mode, audio_input, audio_bitstream, video_input, video_format for XMC processor
   fields:
     xmcNotify:
       name: XMC Notifications
-      description: "A list of additional XMC Notifications for which to create states."
+      description: "A list of additional XMC Notifications for which to create entity attributes."
       required: false
       selector:
         select:

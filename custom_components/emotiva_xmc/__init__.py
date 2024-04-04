@@ -12,6 +12,7 @@ DOMAIN = "emotiva_xmc"
 _LOGGER = logging.getLogger(__name__)
 
 
+
 #import emotiva
 
 from .emotiva import Emotiva
@@ -22,20 +23,21 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     def create_xmc():
         
-        if hass.states.get("emotiva_xmc.control_port") is not None :
-          # We already have ports
-          if int(hass.states.get("emotiva_xmc.control_port").state) != 0 :
+        _state = hass.states.get("%s.processor" % DOMAIN)
+        #if hass.states.get("%s.control_port" % DOMAIN) is not None :
+        try:
+          if int(_state.attributes['control_port']) != 0 :
             # Call with the ports
             _LOGGER.debug("Create with ports")
-            xmc = Emotiva(ip = hass.states.get("emotiva_xmc.address").state,
+            xmc = Emotiva(ip = _state.attributes['address'],
                           transp_xml = None, 
-                          _ctrl_port = int(hass.states.get("emotiva_xmc.control_port").state), 
-                          _notify_port = int(hass.states.get("emotiva_xmc.notify_port").state),
-                          _name = hass.states.get("emotiva_xmc.name").state,
-                          _model = hass.states.get("emotiva_xmc.model").state,
-                          _proto_ver = float(hass.states.get("emotiva_xmc.protocol_version").state),
-                          _info_port = int(hass.states.get("emotiva_xmc.info_port").state),
-                          _setup_port = int(hass.states.get("emotiva_xmc.setup_port").state),
+                          _ctrl_port = int(_state.attributes['control_port']), 
+                          _notify_port = int(_state.attributes['notify_port']),
+                          _name = _state.attributes['name'],
+                          _model = _state.attributes['model'],
+                          _proto_ver = float(_state.attributes['protocol_version']),
+                          _info_port = int(_state.attributes['info_port']),
+                          _setup_port = int(_state.attributes['setup_port']),
                           )
             _method = "ports"
           else :
@@ -45,7 +47,7 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
             xmc = Emotiva(ip = _ip,transp_xml = _xml)
             _method = "discover"
         
-        else :
+        except :
           _LOGGER.debug("Create with xml2")
           _ip, _xml = _discover()
           # call with xml
@@ -92,8 +94,15 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     def _update_all_hass_states(xmc):
         
+        try:
+          _attributes = hass.states.get("%s.processor" % DOMAIN).attributes.copy()
+        except:
+           _attributes = {}
+        
         for ev in xmc._events:
-          hass.states.set("emotiva_xmc.%s" % ev, xmc._current_state[ev])
+          _attributes[ev] = xmc._current_state[ev]
+
+        hass.states.set("%s.processor" % DOMAIN, xmc._current_state['power'],_attributes)
 
     def discover(call: ServiceCall) -> None:
 
@@ -109,20 +118,21 @@ def setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         xmc.connect()
 
-        # xmc._subscribe_events(xmc._events, xmc._proto_ver)
         xmc._update_status(xmc._events, float(xmc._proto_ver))
 
+        hass.states.set("%s.processor" % (DOMAIN),"",
+                        {"control_port":xmc._ctrl_port,
+                         "protocol_version":xmc._proto_ver,
+                         "name":xmc._name,
+                         "model":xmc._model,
+                         "address":xmc._ip,
+                         "info_port":xmc._info_port,
+                         "notify_port":xmc._notify_port,
+                         "setup_port":xmc._setup_port_tcp
+                         })
+                                
         _update_all_hass_states(xmc)
-
-        hass.states.set("emotiva_xmc.control_port", xmc._ctrl_port)
-        hass.states.set("emotiva_xmc.protocol_version", xmc._proto_ver)
-        hass.states.set("emotiva_xmc.name", xmc._name)
-        hass.states.set("emotiva_xmc.model", xmc._model)
-        hass.states.set("emotiva_xmc.address", xmc._ip)
-        hass.states.set("emotiva_xmc.info_port", xmc._info_port)
-        hass.states.set("emotiva_xmc.notify_port", xmc._notify_port)
-        hass.states.set("emotiva_xmc.setup_port", xmc._setup_port_tcp) 
-
+        
         xmc.disconnect()
 
         del xmc

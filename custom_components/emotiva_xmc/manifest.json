@@ -1,6 +1,6 @@
 {
     "domain": "emotiva_xmc",
-    "name": "Emotiva XMC-1",
+    "name": "Emotiva",
     "codeowners": ["@peteS-UK"],
     "dependencies": [],
     "documentation": "https://github.com/peteS-UK/xmc/blob/main/README.md",
