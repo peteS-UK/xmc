@@ -1,5 +1,8 @@
 # Home Assistant to Emotiva Processor service
 
+## Archived
+
+This repo is archived and replaced by a full media player for Emotiva XMC-1, XMC-2 anc RMC-1 at [Emotiva](https://github.com/peteS-UK/emotiva)
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
